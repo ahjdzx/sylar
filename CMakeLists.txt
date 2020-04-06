@@ -183,6 +183,8 @@ set(LIBS
 sylar_add_executable(echo_server "examples/echo_server.cc" sylar "${LIBS}")
 
 sylar_add_executable(test_sizeof "tests/test_sizeof.cc" sylar "${LIBS}")
+sylar_add_executable(study_str "study/study_str.cc" sylar "${LIBS}")
+sylar_add_executable(study_union "study/study_union.cc" sylar "${LIBS}")
 
 if(BUILD_TEST)
 sylar_add_executable(test_util "tests/test_util.cc" sylar "${LIBS}")

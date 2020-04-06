@@ -31,3 +31,4 @@ depcomp
 
 build
 bin/test_sizeof
+bin/study_*
