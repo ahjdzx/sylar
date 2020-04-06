@@ -182,6 +182,8 @@ set(LIBS
         )
 sylar_add_executable(echo_server "examples/echo_server.cc" sylar "${LIBS}")
 
+sylar_add_executable(test_sizeof "tests/test_sizeof.cc" sylar "${LIBS}")
+
 if(BUILD_TEST)
 sylar_add_executable(test_util "tests/test_util.cc" sylar "${LIBS}")
 sylar_add_executable(test_hashmultimap "tests/test_hashmultimap.cc" sylar "${LIBS}")
