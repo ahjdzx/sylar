@@ -128,6 +128,8 @@ set(LIB_SRC
     sylar/worker.cc
     sylar/application.cc
     sylar/zk_client.cc
+
+    study/my_string.cc
     )
 
 ragelmaker(sylar/http/http11_parser.rl LIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/sylar/http)
