@@ -61,7 +61,22 @@ MyString & MyString::operator +(const MyString &other) {
         strcpy(newString.m_data, m_data);
         strcat(newString.m_data, other.m_data);
     }
-    return newString;
+    this->m_data = newString.m_data;
+    return *this;
+}
+
+/*判断相等*/
+bool MyString::operator ==(const MyString &other) {
+    if(strlen(m_data) != strlen(other.m_data)) {
+        return false;
+    } else {
+        return strcmp(m_data, other.m_data) ? false:true;
+    }
+}
+
+/*返回长度*/
+int MyString::getLength() {
+    return strlen(m_data);
 }
 
 }
