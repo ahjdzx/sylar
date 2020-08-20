@@ -189,6 +189,7 @@ sylar_add_executable(study_str "study/study_str.cc" sylar "${LIBS}")
 sylar_add_executable(study_union "study/study_union.cc" sylar "${LIBS}")
 sylar_add_executable(study_string "study/study_string.cc" sylar "${LIBS}")
 sylar_add_executable(study_timed_lru_cache "study/test_timed_lru_cache.cc" sylar "${LIBS}")
+sylar_add_executable(study_dict "tests/test_dict.cc" sylar "${LIBS}")
 
 if(BUILD_TEST)
 sylar_add_executable(test_util "tests/test_util.cc" sylar "${LIBS}")

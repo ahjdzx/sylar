@@ -44,8 +44,35 @@ void test() {
     }
 }
 
+void str_gen() {
+    sylar::ds::StringDict tmp;
+    for(int i = 0; i < 5000; ++i) {
+        uint32_t len = rand() % 10 + 5;
+        tmp.update(sylar::ds::RandomStringGenerator::Gen(len));
+    }
+
+    std::ofstream ofs("./str_dict.data");
+    tmp.writeTo(ofs);
+}
+
+void str_test() {
+    for(int i = 0; i < 10; ++i) {
+        SYLAR_LOG_INFO(g_logger) << "i=" << i;
+        std::ifstream ifs("./str_dict.data");
+        sylar::ds::StringDict tmp;
+        if(!tmp.readFrom(ifs)) {
+            SYLAR_LOG_INFO(g_logger) << "error";
+        }
+        if(i % 100 == 0) {
+            SYLAR_LOG_INFO(g_logger) << "over..." << (i + 1);
+        }
+    }
+}
+
 int main(int argc, char** argv) {
-    gen();
-    test();
+    //gen();
+    //test();
+    str_gen();
+    str_test();
     return 0;
 }

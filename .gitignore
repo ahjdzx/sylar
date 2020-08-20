@@ -32,3 +32,5 @@ depcomp
 build
 bin/test_sizeof
 bin/study_*
+
+str_dict.data
