@@ -153,6 +153,125 @@ private:
     bool m_statusOwner = false;
 };
 
+template<class K, class V, class Hash = std::hash<K>, class RWMutexType = sylar::RWMutex >
+class HashFifoCache {
+public:
+    typedef std::shared_ptr<HashFifoCache> ptr;
+    typedef FifoCache<K, V, RWMutexType> cache_type;
+
+    HashFifoCache(size_t bucket, size_t max_size, size_t elasticity)
+        :m_bucket(bucket) {
+        m_datas.resize(bucket);
+
+        size_t pre_max_size = std::ceil(max_size * 1.0 / bucket);
+        size_t pre_elasiticity = std::ceil(elasticity * 1.0 / bucket);
+        m_maxSize = pre_max_size * bucket;
+        m_elasticity = pre_elasiticity * bucket;
+
+        for(size_t i = 0; i < bucket; ++i) {
+            m_datas[i] = new cache_type(pre_max_size, pre_elasiticity, &m_status);
+        }
+    }
+
+    ~HashFifoCache() {
+        for(size_t i = 0; i < m_datas.size(); ++i) {
+            delete m_datas[i];
+        }
+    }
+
+    void set(const K& k, const V& v, int64_t diff_time_s = 0) {
+        m_datas[m_hash(k) % m_bucket]->set(k, v, diff_time_s);
+    }
+
+    int64_t get(const K& k, V& v) {
+        return m_datas[m_hash(k) % m_bucket]->get(k, v);
+    }
+
+    V get(const K& k) {
+        return m_datas[m_hash(k) % m_bucket]->get(k);
+    }
+
+    bool exists(const K& k) {
+        return m_datas[m_hash(k) % m_bucket]->exists(k);
+    }
+
+    size_t size() {
+        size_t total = 0;
+        for(auto& i : m_datas) {
+            total += i->size();
+        }
+        return total;
+    }
+
+    bool empty() {
+        for(auto& i : m_datas) {
+            if(!i->empty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    void clear() {
+        for(auto& i : m_datas) {
+            i->clear();
+        }
+    }
+
+    size_t getMaxSize() const { return m_maxSize;}
+    size_t getElasticity() const { return m_elasticity;}
+    size_t getMaxAllowedSize() const { return m_maxSize + m_elasticity;}
+    size_t getBucket() const { return m_bucket;}
+
+    void setMaxSize(const size_t& v) {
+        size_t pre_max_size = std::ceil(v * 1.0 / m_bucket);
+        m_maxSize = pre_max_size * m_bucket;
+        for(auto& i : m_datas) {
+            i->setMaxSize(pre_max_size);
+        }
+    }
+
+    void setElasticity(const size_t& v) {
+        size_t pre_elasiticity = std::ceil(v * 1.0 / m_bucket);
+        m_elasticity = pre_elasiticity * m_bucket;
+        for(auto& i : m_datas) {
+            i->setElasticity(pre_elasiticity);
+        }
+    }
+
+    template<class F>
+    void foreach(F& f) {
+        for(auto& i : m_datas) {
+            i->foreach(f);
+        }
+    }
+
+    void setPruneCallback(typename cache_type::prune_callback cb) {
+        for(auto& i : m_datas) {
+            i->setPruneCallback(cb);
+        }
+    }
+
+    std::string toStatusString() {
+        std::stringstream ss;
+        ss << m_status.toString() << " total=" << size();
+        return ss.str();
+    }
+
+    CacheStatus* getStatus() {
+        return &m_status;
+    }
+
+private:
+    std::vector<cache_type*> m_datas;
+    size_t m_maxSize;
+    size_t m_bucket;
+    size_t m_elasticity;
+    Hash m_hash;
+    CacheStatus m_status;
+};
+
+
 }
 }
 
